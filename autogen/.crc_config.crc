@@ -1,0 +1,20 @@
+#CRC Codes for initially generated config files -- do not modify!
+app_assert_config.h=1717687323
+app_properties_config.h=-77184399
+btconf/gatt_configuration.btconf=-1303995415
+btl_interface_cfg.h=-729572575
+dmadrv_config.h=-894158991
+emlib_core_debug_config.h=1524820012
+sl_board_control_config.h=1244702440
+sl_debug_swo_config.h=848473986
+sl_device_init_dcdc_config.h=-1223674373
+sl_device_init_emu_config.h=1414330218
+sl_device_init_hfxo_config.h=-1749681642
+sl_device_init_lfxo_config.h=-1335833621
+sl_memory_config.h=1136720201
+sl_mx25_flash_shutdown_usart_config.h=-1305335158
+sl_ncp_host_com_config.h=-1972777485
+sl_simple_com_config.h=-1304646269
+sl_sleeptimer_config.h=847044378
+sl_uartdrv_usart_exp_config.h=1041262241
+uartdrv_config.h=-1317642855
