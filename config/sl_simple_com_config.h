@@ -41,12 +41,12 @@
 // <o SL_SIMPLE_COM_RX_BUF_SIZE> Receive buffer size (bytes) <260-1024>
 // <i> Default: 260
 // <i> Define the size of the receive buffer in bytes.
-#define SL_SIMPLE_COM_RX_BUF_SIZE        (260)
+#define SL_SIMPLE_COM_RX_BUF_SIZE        (1024)
 
 // <o SL_SIMPLE_COM_TX_BUF_SIZE> Transmit buffer size (bytes) <260-4096>
 // <i> Default: 260
 // <i> Define the size of the transmit buffer in bytes.
-#define SL_SIMPLE_COM_TX_BUF_SIZE        (260)
+#define SL_SIMPLE_COM_TX_BUF_SIZE        (1024)
 
 // <h> Robust
 // <e SL_SIMPLE_COM_ROBUST> Message header

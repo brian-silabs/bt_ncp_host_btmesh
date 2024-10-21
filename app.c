@@ -36,9 +36,20 @@
 #if defined(SL_CATALOG_WAKE_LOCK_PRESENT)
 #include "sl_wake_lock.h"
 #endif // SL_CATALOG_WAKE_LOCK_PRESENT
+#include "sl_btmesh_ncp_host.h"
 
 // The advertising set handle allocated from Bluetooth stack.
 static uint8_t advertising_set_handle = 0xff;
+
+uint8_t     A_BLE_OOB_Authentication[32]   =              {0x11,0x11,0x11,0x11,
+                                                           0x11,0x11,0x11,0x11,
+                                                           0x11,0x11,0x11,0x11,
+                                                           0x11,0x11,0x11,0x11,
+                                                           0x11,0x11,0x11,0x11,
+                                                           0x11,0x11,0x11,0x11,
+                                                           0x11,0x11,0x11,0x11,
+                                                           0x11,0x11,0x11,0x11}; // Temporary OOB Key for BLE Mesh Provisioning
+
 
 /**************************************************************************//**
  * Application Init.
@@ -76,110 +87,118 @@ SL_WEAK void app_process_action(void)
 void sl_bt_on_event(sl_bt_msg_t *evt)
 {
   sl_status_t sc;
-  bd_addr address;
-  uint8_t address_type;
-  uint8_t system_id[8];
 
   switch (SL_BT_MSG_ID(evt->header)) {
     // -------------------------------
     // This event indicates the device has started and the radio is ready.
     // Do not call any stack command before receiving this boot event!
     case sl_bt_evt_system_boot_id:
-
-      // Extract unique ID from BT Address.
-      sc = sl_bt_system_get_identity_address(&address, &address_type);
-      app_assert_status(sc);
-
-      // Pad and reverse unique ID to get System ID.
-      system_id[0] = address.addr[5];
-      system_id[1] = address.addr[4];
-      system_id[2] = address.addr[3];
-      system_id[3] = 0xFF;
-      system_id[4] = 0xFE;
-      system_id[5] = address.addr[2];
-      system_id[6] = address.addr[1];
-      system_id[7] = address.addr[0];
-
-      sc = sl_bt_gatt_server_write_attribute_value(gattdb_system_id,
-                                                   0,
-                                                   sizeof(system_id),
-                                                   system_id);
-      app_assert_status(sc);
-
-      // Create an advertising set.
-      sc = sl_bt_advertiser_create_set(&advertising_set_handle);
-      app_assert_status(sc);
-
-      // Generate data for advertising
-      sc = sl_bt_legacy_advertiser_generate_data(advertising_set_handle,
-                                                 sl_bt_advertiser_general_discoverable);
-      app_assert_status(sc);
-
-      // Set advertising interval to 100ms.
-      sc = sl_bt_advertiser_set_timing(
-        advertising_set_handle,
-        160, // min. adv. interval (milliseconds * 1.6)
-        160, // max. adv. interval (milliseconds * 1.6)
-        0,   // adv. duration
-        0);  // max. num. adv. events
-      app_assert_status(sc);
-      // Start advertising and enable connections.
-      sc = sl_bt_legacy_advertiser_start(advertising_set_handle,
-                                         sl_bt_legacy_advertiser_connectable);
-      app_assert_status(sc);
-      #if defined(SL_CATALOG_WAKE_LOCK_PRESENT)
-      // Signal other controller that it can go to sleep
-      sl_wake_lock_set_local();
-      #endif // SL_CATALOG_WAKE_LOCK_PRESENT
-      break;
-
-    // -------------------------------
-    // This event indicates that a new connection was opened.
-    case sl_bt_evt_connection_opened_id:
-      #if defined(SL_CATALOG_WAKE_LOCK_PRESENT)
-      // Signal other controller that it can go to sleep
-      sl_wake_lock_set_local();
-      #endif // SL_CATALOG_WAKE_LOCK_PRESENT
-      break;
-
-    // -------------------------------
-    // This event indicates that a connection was closed.
-    case sl_bt_evt_connection_closed_id:
-      // Generate data for advertising
-      sc = sl_bt_legacy_advertiser_generate_data(advertising_set_handle,
-                                                 sl_bt_advertiser_general_discoverable);
-      app_assert_status(sc);
-
-      // Restart advertising after client has disconnected.
-      sc = sl_bt_legacy_advertiser_start(advertising_set_handle,
-                                         sl_bt_legacy_advertiser_connectable);
-      app_assert_status(sc);
-      #if defined(SL_CATALOG_WAKE_LOCK_PRESENT)
-      // Signal other controller that it can go to sleep
-      sl_wake_lock_set_local();
-      #endif // SL_CATALOG_WAKE_LOCK_PRESENT
-      break;
-
-    // -------------------------------
-    // This event indicates that target device has woken up.
-    case sl_bt_evt_system_awake_id:
-      #if defined(SL_CATALOG_WAKE_LOCK_PRESENT)
-      // Signal other controller that it can go to sleep
-      sl_wake_lock_set_local();
-      #endif // SL_CATALOG_WAKE_LOCK_PRESENT
+      // Initialize Mesh stack in Node operation mode,
+      // wait for initialized event
+      sc = sl_btmesh_node_set_provisioning_algorithms(  sl_btmesh_node_algorithm_flag_ecdh_p256_cmac_aes128_aes_ccm
+                                                      | sl_btmesh_node_algorithm_flag_ecdh_p256_hmac_sha256_aes_ccm
+                                                      ); // SL_STATUS_INVALID_PARAMETER if aes128 only
+      app_assert(sc == SL_STATUS_OK,
+                 "[E: 0x%04x] Failed to set algorithms\n",
+                 (int)sc);
+      sc = sl_btmesh_node_init_oob(0x00,0x02,0x0,0x0,0x0,0x0,0x0);
+      //sc = sl_btmesh_node_init();
+      app_assert(sc == SL_STATUS_OK,
+                 "[E: 0x%04x] Failed to init node\n",
+                 (int)sc);
       break;
 
     ///////////////////////////////////////////////////////////////////////////
     // Add additional event handlers here as your application requires!      //
     ///////////////////////////////////////////////////////////////////////////
 
+        case sl_bt_evt_connection_opened_id:
+      {
+        uint32_t conn_handle;
+        conn_handle     = evt->data.evt_connection_opened.connection;
+
+      }
+      break;
+
+    case sl_bt_evt_connection_closed_id:
+      {
+        uint32_t closedReason;
+        closedReason = evt->data.evt_connection_closed.reason;
+      }
+      break;
+
     // -------------------------------
     // Default event handler.
     default:
-      #if defined(SL_CATALOG_WAKE_LOCK_PRESENT)
-      // Signal other controller that it can go to sleep
-      sl_wake_lock_set_local();
-      #endif // SL_CATALOG_WAKE_LOCK_PRESENT
       break;
   }
 }
+
+/**************************************************************************//**
+ * Bluetooth Mesh stack event handler.
+ * This overrides the dummy weak implementation.
+ *
+ * @param[in] evt Event coming from the Bluetooth Mesh stack.
+ *****************************************************************************/
+void sl_btmesh_on_event(sl_btmesh_msg_t *evt)
+{
+  sl_status_t sc;
+  switch (SL_BT_MSG_ID(evt->header)) {
+    case sl_btmesh_evt_node_initialized_id:
+      if (!evt->data.evt_node_initialized.provisioned) {
+        // The Node is now initialized,
+        // start unprovisioned Beaconing using PB-ADV and PB-GATT Bearers
+        sc = sl_btmesh_node_start_unprov_beaconing(0x3);
+        app_assert(sc == SL_STATUS_OK,
+                   "[E: 0x%04x] Failed to start unprovisioned beaconing\n",
+                   (int)sc);
+      }
+      break;
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Add additional event handlers here as your application requires!      //
+    ///////////////////////////////////////////////////////////////////////////
+
+      /*Provisioning process started event*/
+    case sl_btmesh_evt_node_provisioning_started_id:
+      {
+        uint32_t result;
+        result = evt->data.evt_node_provisioning_started.result;
+      }
+      break;
+
+      /*  Static OOB connection request event*/
+    case sl_btmesh_evt_node_static_oob_request_id:
+      {
+        sc = sl_btmesh_node_send_input_oob_request_response(
+            sizeof(A_BLE_OOB_Authentication),(void *)&A_BLE_OOB_Authentication); // OOB response with static OOB key
+        app_assert(sc == SL_STATUS_OK,
+            "[E: 0x%04x] Failed to send OOB response\n",
+            (int)sc);
+      }
+      break;
+
+      /*Provisioning process success event*/
+    case sl_btmesh_evt_node_provisioned_id:
+      {
+      }
+      break;
+
+      /* Provisioning process failure event*/
+    case sl_btmesh_evt_node_provisioning_failed_id:
+      {
+        uint32_t result;
+        result = evt->data.evt_node_provisioning_failed.result;
+        app_assert(sc == SL_STATUS_OK,
+            "[E: 0x%04x] Failed to perform provisioning\n",
+            (int)result);
+      }
+      break;
+
+    // -------------------------------
+    // Default event handler.
+    default:
+      break;
+  }
+}
+

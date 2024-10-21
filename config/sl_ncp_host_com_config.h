@@ -40,7 +40,7 @@
 // <o SL_NCP_HOST_COM_BUF_SIZE> Buffer size (bytes) <260-4096>
 // <i> Default: 260
 // <i> Define the size of the buffer in bytes.
-#define SL_NCP_HOST_COM_BUF_SIZE     (260)
+#define SL_NCP_HOST_COM_BUF_SIZE     (1024)
 
 // <<< end of configuration section >>>
 

@@ -137,6 +137,13 @@ void sl_simple_com_step(void)
       sl_simple_com_transmit_cb(ECODE_EMDRV_UARTDRV_OK == tx_cb_signal.status
                                 ? SL_STATUS_OK : SL_STATUS_FAIL);
     }
+  } else if ((!(UARTDRV_GetPeripheralStatus(uartdrv_handle) & UARTDRV_STATUS_RXEN))){// BRIAN EDIT - Force enable receiver at all times, otherwise events are missed
+      Ecode_t ec;
+      ec = uart_receive_start(uartdrv_handle);
+      app_assert(ECODE_EMDRV_UARTDRV_OK == ec,
+                 "[E: 0x%04x] Failed to start receiving\n",
+                 (int)ec);
+      (void)ec;
   }
 }
 

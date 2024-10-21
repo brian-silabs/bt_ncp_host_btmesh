@@ -295,6 +295,8 @@
         <folder name="src">
           <file name="sl_bt_ncp_host_api.c" linked="false" uri="studio:/sdk/protocol/bluetooth/src/sl_bt_ncp_host_api.c"/>
           <file name="sl_bt_ncp_host.c" linked="false" uri="studio:/sdk/protocol/bluetooth/src/sl_bt_ncp_host.c"/>
+          <file name="sl_btmesh_ncp_host_api.c" linked="false" uri="studio:/sdk/protocol/bluetooth/src/sl_btmesh_ncp_host_api.c"/>
+          <file name="sl_btmesh_ncp_host.c" linked="false" uri="studio:/sdk/protocol/bluetooth/src/sl_btmesh_ncp_host.c"/>
         </folder>
         <folder name="inc">
           <file name="sl_bgapi.h" linked="false" uri="studio:/sdk/protocol/bluetooth/inc/sl_bgapi.h"/>
@@ -305,6 +307,13 @@
           <file name="sl_bt_version.h" linked="false" uri="studio:/sdk/protocol/bluetooth/inc/sl_bt_version.h"/>
           <file name="sl_bt_ncp_host.h" linked="false" uri="studio:/sdk/protocol/bluetooth/inc/sl_bt_ncp_host.h"/>
           <file name="sli_bt_gattdb_def.h" linked="false" uri="studio:/sdk/protocol/bluetooth/inc/sli_bt_gattdb_def.h"/>
+          <file name="sl_btmesh_api.h" linked="false" uri="studio:/sdk/protocol/bluetooth/inc/sl_btmesh_api.h"/>
+          <file name="sli_btmesh_api.h" linked="false" uri="studio:/sdk/protocol/bluetooth/inc/sli_btmesh_api.h"/>
+          <file name="sl_btmesh_bgapi.h" linked="false" uri="studio:/sdk/protocol/bluetooth/inc/sl_btmesh_bgapi.h"/>
+          <file name="sl_btmesh_capi_types.h" linked="false" uri="studio:/sdk/protocol/bluetooth/inc/sl_btmesh_capi_types.h"/>
+          <file name="sl_btmesh_lib.h" linked="false" uri="studio:/sdk/protocol/bluetooth/inc/sl_btmesh_lib.h"/>
+          <file name="sl_btmesh_stack_init.h" linked="false" uri="studio:/sdk/protocol/bluetooth/inc/sl_btmesh_stack_init.h"/>
+          <file name="sl_btmesh_ncp_host.h" linked="false" uri="studio:/sdk/protocol/bluetooth/inc/sl_btmesh_ncp_host.h"/>
         </folder>
       </folder>
     </folder>
@@ -386,6 +395,7 @@
   <macroDefinition name="HFXO_FREQ" value="38400000"/>
   <macroDefinition name="SL_BOARD_NAME" value="&quot;BRD4162A&quot;"/>
   <macroDefinition name="SL_BOARD_REV" value="&quot;A03&quot;"/>
+  <macroDefinition name="BTMESH_API_NCP_HOST" value="1"/>
   <macroDefinition name="SL_COMPONENT_CATALOG_PRESENT"/>
   <libraryFile name="gcc"/>
   <libraryFile name="c"/>

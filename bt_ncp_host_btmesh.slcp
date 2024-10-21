@@ -32,6 +32,7 @@ component:
 - {id: brd4001a}
 - {id: brd4162a}
 - {id: bt_post_build}
+- {id: btmesh_api_ncp_host}
 - {id: gatt_configuration}
 - {id: mpu}
 - {id: ncp_host_com}

@@ -30,6 +30,7 @@
 #include <stdbool.h>
 #include "em_core.h"
 #include "sl_bt_ncp_host.h"
+#include "sl_btmesh_ncp_host.h"
 #include "sl_simple_com.h"
 #include "sl_ncp_host_com.h"
 #include "app_assert.h"
@@ -61,6 +62,11 @@ void sl_ncp_host_com_init(void)
   app_assert(sc == SL_STATUS_OK,
              "[E: 0x%04x] Failed to init Bluetooth NCP\n",
              (int)sc);
+
+#if defined(BTMESH_API_NCP_HOST)
+  SL_BTMESH_API_REGISTER();//BRIAN
+#endif
+
 }
 
 /**************************************************************************//**

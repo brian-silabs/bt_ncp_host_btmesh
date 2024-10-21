@@ -12,6 +12,7 @@
 #include "sl_board_control.h"
 #include "sl_sleeptimer.h"
 #include "sl_bluetooth.h"
+#include "sl_btmesh.h"
 #include "sl_debug_swo.h"
 #include "gpiointerrupt.h"
 #include "sl_mpu.h"
@@ -54,6 +55,7 @@ void sl_service_init(void)
 void sl_stack_init(void)
 {
   sl_bt_init();
+  sl_btmesh_init();
 }
 
 void sl_internal_app_init(void)
@@ -74,6 +76,7 @@ void sl_service_process_action(void)
 void sl_stack_process_action(void)
 {
   sl_bt_step();
+  sl_btmesh_step();
 }
 
 void sl_internal_app_process_action(void)
